@@ -1,4 +1,4 @@
 flask
 sqlalchemy
 flask_sqlalchemy
-flask_socketio
+flask_socketio==5.2.0

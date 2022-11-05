@@ -1,5 +1,4 @@
 import os
-from werkzeug.utils import secure_filename
 from flask import *
 import hashlib
 import uuid
@@ -53,9 +52,10 @@ def login():
         password = request.form['password']
         password = hashlib.sha256(password.encode()).hexdigest()
         user = User.query.filter_by(username = username, password = password).first()
+        print(user)
         if user:
             resp = make_response(redirect('user'))
-            resp.set_cookie('user_identifier', user['user_id'])
+            resp.set_cookie('user_identifier', user.user_id)
             return resp
     return render_template('login.html')
 @app.route('/register', methods = ['POST', 'GET'])
@@ -66,12 +66,11 @@ def register():
         password = request.form['password']
         user_id = uuid.uuid4()
         password = hashlib.sha256(password.encode()).hexdigest()
-        secret = os.urandom(30).hex()
         user = User.query.filter_by(username = username).all()
         if user:
             msg = 'user already exists!'
             return render_template('register.html', msg=msg)
-        user = User(username = username, password = password, user_id=user_id, secret = secret)
+        user = User(username = username, password = password, user_id=str(user_id))
         db.session.add(user)
         db.session.commit()
         print("done")
@@ -151,5 +150,5 @@ def add_wifi_deets():
         return { 'msg': 'Not logged in' }
 
 if __name__ == "__main__":
-    socketio.run(app)
-    app.run(host='0.0.0.0',port=8000,allow_unsafe_werkzeug=True)
+    socketio.run(app,host='0.0.0.0',port=8000)
+    app.run(host='0.0.0.0',port=8000)
