@@ -16,6 +16,13 @@ db = SQLAlchemy(app)
 
 socketio = SocketIO(app)
 
+def row2dict(row):
+    d = {}
+    for column in row.__table__.columns:
+        d[column.name] = str(getattr(row, column.name))
+
+    return d
+
 class User(db.Model):
     username = db.Column(db.String(30), primary_key = True)
     password = db.Column(db.String(300))
@@ -54,7 +61,7 @@ def login():
         user = User.query.filter_by(username = username, password = password).first()
         print(user)
         if user:
-            resp = make_response(redirect('user'))
+            resp = make_response({ 'msg': 'Successfully logged in' })
             resp.set_cookie('user_identifier', user.user_id)
             return resp
     return render_template('login.html')
@@ -80,6 +87,7 @@ def register():
 @socketio.on('message', namespace='/device_comms')
 def handle_message(message):
     message_data = json.loads(message)
+    print(message)
     mtype = message_data['type']
     if mtype == 'wifi_ect_data':
         secret = message_data['secret']
@@ -104,6 +112,7 @@ def add_device():
             dvice = Device(name=name, uuid=device_uuid, user=user)
             db.session.add(dvice)
             db.session.commit()
+            return { 'msg': 'Successfully added device' }
         else:
                 return { 'error': 'Invalid data' }
     else:
@@ -118,7 +127,7 @@ def get_wifi_data():
             wifi_uuid = request.form['wifi_uuid']
             wifi = Wifi.query.filter_by(uuid=wifi_uuid).first()
             if wifi.user.username == user.username:
-                return { 'wifi': wifi._asdict() }
+                return { 'wifi': row2dict(wifi) }
             else:
                 return { 'msg': 'You are not authorized to access data about this WiFi network' }
         else:
@@ -139,11 +148,11 @@ def add_wifi_deets():
             ssid = request.form['ssid']
             password = request.form['password']
             wifi_uuid = uuid.uuid4()
-            wifi = Wifi(uuid=wifi_uuid, ssid=ssid, password=password, user=user)
+            wifi = Wifi(uuid=str(wifi_uuid), ssid=ssid, password=password, user=user)
             db.session.add(wifi)
             db.session.commit()
-            emit(json.dumps({ 'type': 'wifi_data', 'uuid': wifi_uuid, 'ssid': ssid}), broadcast=True)
-            return { 'msg': 'Added wifi device', 'uuid': wifi_uuid }
+            emit('message', json.dumps({ 'type': 'wifi_data', 'uuid': str(wifi_uuid), 'ssid': ssid}), broadcast=True, namespace='/device_comms')
+            return { 'msg': 'Added wifi network', 'uuid': str(wifi_uuid) }
         else:
             return { 'error': 'Invalid data' }
     else:

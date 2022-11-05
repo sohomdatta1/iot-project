@@ -17,6 +17,7 @@ def perform_krack(ssid, password):
 
 @sio.on('message')
 def on_message(ws, message):
+    print(message)
     message_data = json.loads(message)
     if message_data['type'] == 'wifi_data':
         ssid = message_data['type']['ssid']
@@ -30,6 +31,6 @@ def on_message(ws, message):
         password = message_data['type']['password']
         uuid = message_data['type']['uuid']
         result = perform_krack(ssid, password)
-        ws.send(json.dumps(json.dumps({'type': 'krack_data_send', 'uuid': uuid, 'result': result})))
+        ws.send(json.dumps({'type': 'krack_data_send', 'uuid': uuid, 'result': result}))
 
-sio.connect("http://0.0.0.0:5000/device_comms")
+sio.connect("http://0.0.0.0:8000/device_comms")
