@@ -86,7 +86,10 @@ def register():
 
 @socketio.on('message', namespace='/device_comms')
 def handle_message(message):
-    message_data = json.loads(message)
+    if type(message) is dict:
+        message_data = message
+    else:
+        message_data = json.loads(message)
     print(message)
     mtype = message_data['type']
     if mtype == 'wifi_ect_data':

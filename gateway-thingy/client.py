@@ -15,22 +15,38 @@ sio = socketio.Client()
 def perform_krack(ssid, password):
     pass
 
-@sio.on('message')
-def on_message(ws, message):
+@sio.event
+def connect():
+    print("I'm connected!")
+
+@sio.event
+def connect_error(data):
+    print("The connection failed!")
+
+@sio.event
+def disconnect():
+    print("I'm disconnected!")
+
+@sio.on('message', namespace='/device_comms')
+def on_message(message):
     print(message)
     message_data = json.loads(message)
     if message_data['type'] == 'wifi_data':
-        ssid = message_data['type']['ssid']
-        uuid = message_data['type']['uuid']
+        ssid = message_data['ssid']
+        uuid = message_data['uuid']
         if rdis.exists(ssid):
             ect = rdis.get(ssid)
-            ws.send(json.dumps({'type': 'krack_data_req', 'uuid': uuid, 'secret': device_secret}))
-            ws.send(json.dumps({'type': 'wifi_ect_data', 'uuid': uuid, 'ect': ect, 'secret': device_secret}))
+            sio.send(json.dumps({'type': 'krack_data_req', 'uuid': uuid, 'secret': device_secret}), namespace='/device_comms')
+            sio.send(json.dumps({'type': 'wifi_ect_data', 'uuid': uuid, 'ect': ect.decode(), 'secret': device_secret}), namespace='/device_comms')
     elif message_data['type'] == 'krack_data':
-        ssid = message_data['type']['ssid']
-        password = message_data['type']['password']
-        uuid = message_data['type']['uuid']
+        ssid = message_data['ssid']
+        password = message_data['password']
+        uuid = message_data['uuid']
         result = perform_krack(ssid, password)
-        ws.send(json.dumps({'type': 'krack_data_send', 'uuid': uuid, 'result': result}))
+        sio.send(json.dumps({'type': 'krack_data_send', 'uuid': uuid, 'result': result}))
 
-sio.connect("http://0.0.0.0:8000/device_comms")
+@sio.on('*')
+def catch_all(event, data):
+    print(event, data)
+
+sio.connect("http://0.0.0.0:8000", namespaces=['/device_comms'])
