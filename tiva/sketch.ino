@@ -7,7 +7,7 @@ int status = WL_IDLE_STATUS;
 // if you don't want to use DNS (and reduce your sketch size)
 // use the numeric IP instead of the name for the server:
 //IPAddress server(74,125,232,128);  // numeric IP for Google (no DNS)
-IPAdress server(192,168,110,155);    // name address for Google (using DNS)
+char server[] = "192.168.110.155";    // name address for Google (using DNS)
 
 // Initialize the Ethernet client library
 // with the IP address and port of the server
@@ -16,8 +16,13 @@ WiFiClient client;
 
 void setup() {
   //Initialize serial and wait for port to open:
+  pinMode(13, OUTPUT);
   Serial.begin(38400);
   while (!Serial) {
+    digitalWrite(13, HIGH);  // turn the LED on (HIGH is the voltage level)
+    delay(1000);                      // wait for a second
+    digitalWrite(13, LOW);   // turn the LED off by making the voltage LOW
+    delay(1000);   
     ; // wait for serial port to connect. Needed for native USB port only
   }
   // check for the presence of the shield:
@@ -43,7 +48,7 @@ void setup() {
   printWifiStatus();
   Serial.println("\nStarting connection to server...");
   // if you get a connection, report back via serial:
-  if (client.connect(server, 65432)) {
+  if (client.connect(server, 65431)) {
     Serial.println("connected to server");
   }
 }
@@ -59,30 +64,32 @@ void loop() {
 
   // print the network number and name for each network found:
   for (int thisNet = 0; thisNet < numSsid; thisNet++) {
-    client.print(WiFi.SSID(thisNet));
+    client.print(String("") + WiFi.SSID(thisNet) + "+" + ect(WiFi.encryptionType(thisNet)));
+    delay(1000);
+    Serial.println(WiFi.SSID(thisNet));
     Serial.print(" ");
-    printEncryptionType(WiFi.encryptionType(thisNet));
+    //printEncryptionType(WiFi.encryptionType(thisNet));
   }
-  delay(10000);
+  delay(30 * 1000);
 }
 
-void printEncryptionType(int thisType) {
+String ect(int thisType) {
   // read the encryption type and print out the name:
   switch (thisType) {
     case ENC_TYPE_WEP:
-      client.println("WEP");
+      return String("WEP");
       break;
     case ENC_TYPE_TKIP:
-      client.println("WPA");
+      return String("WPA");
       break;
     case ENC_TYPE_CCMP:
-      client.println("WPA2");
+      return String("WPA2");
       break;
     case ENC_TYPE_NONE:
-      Serial.println("None");
+      return String("None");
       break;
     case ENC_TYPE_AUTO:
-      Serial.println("Auto");
+      return String("Auto");
       break;
   }
 }

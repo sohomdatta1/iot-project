@@ -152,4 +152,4 @@ def add_wifi_deets():
 
 if __name__ == "__main__":
     socketio.run(app)
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0',port=8000,allow_unsafe_werkzeug=True)
