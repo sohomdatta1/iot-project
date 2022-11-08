@@ -75,7 +75,7 @@ def login_api():
         user = User.query.filter_by(username = username, password = password).first()
         print(user)
         if user:
-            resp = make_response({ 'msg': 'Successfully logged in' })
+            resp = make_response({ 'msg': 'Successfully logged in','user_id':user.user_id })
             resp.set_cookie('user_identifier', user.user_id)
             return resp
     return render_template('login.html')
@@ -117,7 +117,7 @@ def register_api():
         db.session.commit()
         print("done")
     msg = 'You have successfully registered!'
-    resp = make_response({ 'msg': msg })
+    resp = make_response({ 'msg': msg , 'user_id':user.user_id})
     return resp
 
 @socketio.on('message', namespace='/device_comms')
@@ -159,15 +159,20 @@ def add_device():
 
 @app.route('/devices_api', methods = ['GET'])
 def devices_api():
+    print(request.cookies)
     user_identifier = request.cookies.get('user_identifier')
     user = User.query.filter_by(user_id=user_identifier).first()
     if user:
+        msg = 'Ok'
         devices = Device.query.all()
-        msg = {}
+        devicelist = {}
         for device in devices:
-            msg[device.uuid] = {'name':device.name, 'uuid':device.uuid, 'user_id':device.user_id}
-        return { 'msg': msg }
+            devicelist[device.uuid] = {'name':device.name, 'uuid':device.uuid, 'user_id':device.user_id}
+
+        print({ 'msg': msg, 'devicelist':devicelist })
+        return { 'msg': msg, 'devicelist':devicelist }
     else:
+        print({ 'msg': 'Not logged in' })
         return { 'msg': 'Not logged in' }
 
 @app.route('/get_wifi_ect_for_app', methods = ['POST'])

@@ -109,10 +109,12 @@ public class LoginFragment extends Fragment {
                             String msg = res.get("msg").toString();
                             if(msg.equals(getResources().getString(R.string.register_msg)))
                             {
+                                String user_id = res.get("user_id").toString();
                                 Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
                                 SharedPreferences sp=getActivity().getSharedPreferences("Login", MODE_PRIVATE);
                                 SharedPreferences.Editor Ed=sp.edit();
                                 Ed.putString("username",username);
+                                Ed.putString("user_id",user_id);
                                 Ed.commit();
                                 Intent intent = new Intent(getActivity(), WifiESActivity.class);
                                 startActivity(intent);
@@ -158,9 +160,11 @@ public class LoginFragment extends Fragment {
                             String msg = res.get("msg").toString();
                             if(msg.equals(getResources().getString(R.string.login_msg)))
                             {
+                                String user_id = res.get("user_id").toString();
                                 SharedPreferences sp=getActivity().getSharedPreferences("Login", MODE_PRIVATE);
                                 SharedPreferences.Editor Ed=sp.edit();
                                 Ed.putString("username",username);
+                                Ed.putString("user_id",user_id);
                                 Ed.commit();
                                 Intent intent = new Intent(getActivity(), WifiESActivity.class);
                                 startActivity(intent);

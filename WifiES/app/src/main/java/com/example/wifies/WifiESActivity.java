@@ -1,8 +1,10 @@
 package com.example.wifies;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Menu;
+import android.widget.TextView;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
@@ -16,10 +18,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.wifies.databinding.ActivityWifiEsBinding;
 
+import org.w3c.dom.Text;
+
 public class WifiESActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityWifiEsBinding binding;
+    String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,16 +34,12 @@ public class WifiESActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.appBarWifiEs.toolbar);
-        binding.appBarWifiEs.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
         // Passing each menu ID as a set of Ids because each
+        View headerView = navigationView.getHeaderView(0);
+        TextView userView = (TextView) headerView.findViewById(R.id.userView);
+
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_devices, R.id.nav_scan, R.id.nav_log)
@@ -47,6 +48,11 @@ public class WifiESActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_wifi_es);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
+        SharedPreferences sp= getSharedPreferences("Login", MODE_PRIVATE);
+        username = sp.getString("username","");
+
+        userView.setText("Welcome, "+username);
     }
 
     @Override

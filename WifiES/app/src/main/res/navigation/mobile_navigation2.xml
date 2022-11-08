@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/nav_log"
-        android:name="com.example.wifies.ui.slideshow.SlideshowFragment"
+        android:name="com.example.wifies.ui.scan.ScanFragment"
         android:label="@string/menu_log"
         tools:layout="@layout/fragment_log" />
 </navigation>
