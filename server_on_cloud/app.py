@@ -65,6 +65,21 @@ def login():
             resp.set_cookie('user_identifier', user.user_id)
             return resp
     return render_template('login.html')
+
+@app.route('/login_api', methods = ['POST', 'GET'])
+def login_api():
+    if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
+        username = request.form['username']
+        password = request.form['password']
+        password = hashlib.sha256(password.encode()).hexdigest()
+        user = User.query.filter_by(username = username, password = password).first()
+        print(user)
+        if user:
+            resp = make_response({ 'msg': 'Successfully logged in' })
+            resp.set_cookie('user_identifier', user.user_id)
+            return resp
+    return render_template('login.html')
+
 @app.route('/register', methods = ['POST', 'GET'])
 def register():
     msg = ''
@@ -83,6 +98,27 @@ def register():
         print("done")
         msg = 'You have successfully registered!'
     return render_template('register.html', msg=msg)
+
+@app.route('/register_api', methods = ['POST', 'GET'])
+def register_api():
+    msg = ''
+    if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
+        username = request.form['username']
+        password = request.form['password']
+        user_id = uuid.uuid4()
+        password = hashlib.sha256(password.encode()).hexdigest()
+        user = User.query.filter_by(username = username).all()
+        if user:
+            msg = 'user already exists!'
+            resp = make_response({ 'msg': msg })
+            return resp
+        user = User(username = username, password = password, user_id=str(user_id))
+        db.session.add(user)
+        db.session.commit()
+        print("done")
+    msg = 'You have successfully registered!'
+    resp = make_response({ 'msg': msg })
+    return resp
 
 @socketio.on('message', namespace='/device_comms')
 def handle_message(message):
@@ -118,6 +154,19 @@ def add_device():
             return { 'msg': 'Successfully added device' }
         else:
                 return { 'error': 'Invalid data' }
+    else:
+        return { 'msg': 'Not logged in' }
+
+@app.route('/devices_api', methods = ['GET'])
+def devices_api():
+    user_identifier = request.cookies.get('user_identifier')
+    user = User.query.filter_by(user_id=user_identifier).first()
+    if user:
+        devices = Device.query.all()
+        msg = {}
+        for device in devices:
+            msg[device.uuid] = {'name':device.name, 'uuid':device.uuid, 'user_id':device.user_id}
+        return { 'msg': msg }
     else:
         return { 'msg': 'Not logged in' }
 
@@ -162,5 +211,5 @@ def add_wifi_deets():
         return { 'msg': 'Not logged in' }
 
 if __name__ == "__main__":
-    socketio.run(app,host='0.0.0.0',port=8000)
-    app.run(host='0.0.0.0',port=8000)
+    socketio.run(app,host='0.0.0.0',port=8000,debug=True)
+    app.run(host='0.0.0.0',port=8000,debug=True)
