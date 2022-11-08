@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">WifiES</string>
+    <string name="app_title">WifiES Security</string>
+    <string name="login">Login</string>
+    <string name="nav_open">Open</string>
+    <string name="nav_close">Close</string>
+    <string name="switch_state_login">Already registered? Login</string>
+    <string name="switch_state_register">New? Create a new account</string>
+</resources>

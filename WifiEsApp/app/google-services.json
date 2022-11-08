@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "812136511684",
+    "project_id": "wifiesapp",
+    "storage_bucket": "wifiesapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:812136511684:android:5774e8a6465a887787b191",
+        "android_client_info": {
+          "package_name": "com.example.wifiesapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "812136511684-afs8s8328scb3hj1nukk0460hgvvc4ka.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRKTUuzvadIorMh7ny5452G0vcboV97FI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "812136511684-afs8s8328scb3hj1nukk0460hgvvc4ka.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
