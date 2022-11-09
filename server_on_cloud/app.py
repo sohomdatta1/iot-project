@@ -193,6 +193,21 @@ def get_wifi_data():
     else:
         return { 'msg': 'Not logged in' }
 
+@app.route('/get_wifi_api', methods = ['GET'])
+def get_wifi_api():
+    user_identifier = request.cookies.get('user_identifier')
+    user = User.query.filter_by(user_id=user_identifier).first()
+    if user:
+        wifi = Wifi.query.filter_by(user=user).all()
+        msg = 'Ok'
+        wifilist = {}
+        for w in wifi:
+            wifilist[w.uuid] = {'ssid':w.ssid, 'uuid':w.uuid, 'user_id':w.user_id, 'ect':w.ect, 'krack':w.krack, 'password':w.password}
+
+        return { 'msg': msg, 'wifilist':wifilist }
+    else:
+        return { 'msg': 'Not logged in' }
+
 @app.route('/forget_wifi_data', methods = [ 'POST' ])
 def forget_wifi_data():
     pass
@@ -210,9 +225,10 @@ def add_wifi_deets():
             db.session.add(wifi)
             db.session.commit()
             emit('message', json.dumps({ 'type': 'wifi_data', 'uuid': str(wifi_uuid), 'ssid': ssid}), broadcast=True, namespace='/device_comms')
+            print({ 'msg': 'Added wifi network', 'uuid': str(wifi_uuid) })
             return { 'msg': 'Added wifi network', 'uuid': str(wifi_uuid) }
         else:
-            return { 'error': 'Invalid data' }
+            return { 'msg': 'Invalid data' }
     else:
         return { 'msg': 'Not logged in' }
 

@@ -17,12 +17,14 @@
     <string name="action_settings">Settings</string>
     <string name="user_id_cookie">user_identifier</string>
     <string name="devicelist">devicelist</string>
+    <string name="wifilist">wifilist</string>
     <string name="device_list_ok">Ok</string>
     <string name="menu_login">Login</string>
     <string name="menu_scan">Scan</string>
     <string name="menu_devices">Devices</string>
-    <string name="menu_log">Log</string>
+    <string name="menu_log">Add wifi details</string>
     <string name="menu_add_device">Add a device</string>
     <string name="add_device_msg">Successfully added device</string>
+    <string name="add_wifi_msg">Added wifi network</string>
     <string name="title_activity_wifi_es">WifiES</string>
 </resources>
