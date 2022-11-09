@@ -22,5 +22,7 @@
     <string name="menu_scan">Scan</string>
     <string name="menu_devices">Devices</string>
     <string name="menu_log">Log</string>
+    <string name="menu_add_device">Add a device</string>
+    <string name="add_device_msg">Successfully added device</string>
     <string name="title_activity_wifi_es">WifiES</string>
 </resources>

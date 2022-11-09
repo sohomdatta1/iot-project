@@ -149,11 +149,14 @@ def add_device():
             device_uuid = request.form['device_uuid']
             name = request.form['device_name']
             dvice = Device(name=name, uuid=device_uuid, user=user)
-            db.session.add(dvice)
-            db.session.commit()
+            try:
+                db.session.add(dvice)
+                db.session.commit()
+            except Exception as e:
+                return { 'msg': str(e) }
             return { 'msg': 'Successfully added device' }
         else:
-                return { 'error': 'Invalid data' }
+                return { 'msg': 'Invalid data' }
     else:
         return { 'msg': 'Not logged in' }
 
@@ -164,15 +167,13 @@ def devices_api():
     user = User.query.filter_by(user_id=user_identifier).first()
     if user:
         msg = 'Ok'
-        devices = Device.query.all()
+        devices = Device.query.filter_by(user=user).all()
         devicelist = {}
         for device in devices:
             devicelist[device.uuid] = {'name':device.name, 'uuid':device.uuid, 'user_id':device.user_id}
 
-        print({ 'msg': msg, 'devicelist':devicelist })
         return { 'msg': msg, 'devicelist':devicelist }
     else:
-        print({ 'msg': 'Not logged in' })
         return { 'msg': 'Not logged in' }
 
 @app.route('/get_wifi_ect_for_app', methods = ['POST'])

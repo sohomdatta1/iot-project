@@ -42,7 +42,7 @@ public class WifiESActivity extends AppCompatActivity {
 
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_devices, R.id.nav_scan, R.id.nav_log)
+                R.id.nav_devices, R.id.nav_scan, R.id.nav_log, R.id.nav_add_device)
                 .setOpenableLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_wifi_es);
