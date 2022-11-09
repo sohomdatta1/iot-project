@@ -221,7 +221,7 @@ def add_wifi_deets():
             ssid = request.form['ssid']
             password = request.form['password']
             wifi_uuid = uuid.uuid4()
-            wifi = Wifi(uuid=str(wifi_uuid), ssid=ssid, password=password, user=user)
+            wifi = Wifi(uuid=str(wifi_uuid), krack="Insecure",ect="WPA",ssid=ssid, password=password, user=user)
             db.session.add(wifi)
             db.session.commit()
             emit('message', json.dumps({ 'type': 'wifi_data', 'uuid': str(wifi_uuid), 'ssid': ssid}), broadcast=True, namespace='/device_comms')
