@@ -10,15 +10,15 @@
             android:title="@string/menu_devices" />
         <item
             android:id="@+id/nav_scan"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/ic_menu_scan"
             android:title="@string/menu_scan" />
         <item
             android:id="@+id/nav_add_device"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/ic_menu_add"
             android:title="@string/menu_add_device" />
         <item
             android:id="@+id/nav_log"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/ic_menu_add"
             android:title="@string/menu_log" />
     </group>
 </menu>
